@@ -5,12 +5,27 @@
 set -e
 
 cd "$(dirname "$0")/.."
+# Define a local install path and bin dir
+LOCAL_PATH=$HOME/.local_gem
+LOCAL_BIN=$HOME/bin
 
-# make sure bundler installed
-which bundler 2>&1 >/dev/null || gem install bundler
+# make sure dotfile and bin dir exist
+mkdir -p $LOCAL_PATH
+mkdir -p $LOCAL_BIN
+
+# Target env set
+export TARGET=$LOCAL_BIN
+
+# make sure bundler installed locally
+if ! which bundler 2>&1 >/dev/null; then
+	gem install bundler --install-dir=$LOCAL_PATH --bindir=$LOCAL_BIN --no-user-install --no-format-executable
+	
+fi
 
 # make sure needed gems installed
-bundle check --path vendor/gems 2>&1 >/dev/null || bundle install --path vendor/gems --quiet
+bundle config set --local path 'vendor/gems'
+bundle config set --local bin "$LOCAL_BIN"
+bundle check 2>&1 >/dev/null || bundle install --quiet
 
 # install scripts
 rake

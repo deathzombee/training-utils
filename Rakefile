@@ -18,7 +18,8 @@ task :install do
 end
 
 def ask_for_target_dir
-  puts "Directory to install? (needs to be in your $PATH; /usr/local/bin is the default, hit enter to use that)"
+  default_target = ENV["TARGET"] || "usr/local/bin"
+  puts "Directory to install? (needs to be in your $PATH; #{default_target} is the default, hit enter to use that)"
   answer = STDIN.gets.chomp
-  (answer unless answer == "") || "/usr/local/bin"
+  (answer unless answer == "") || default_target
 end
